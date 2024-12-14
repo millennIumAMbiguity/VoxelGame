@@ -152,7 +152,8 @@ namespace VoxelGame.Voxel
             if (IsLoaded)
                 return;
 
-            generator.GenerateMap(data.Position, data.map);
+            generator.GenerateMap(data.Position, ref data.map);
+            generator.GenerateChunkStructures(data.Coords, ref data.map);
         }
 
         public class Factory : PlaceholderFactory<ChunkData, Chunk>

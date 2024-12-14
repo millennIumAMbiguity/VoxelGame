@@ -8,8 +8,10 @@ namespace VoxelGame.Voxel
         public Vector3Int position;
         public VoxelStructure structure;
 
-        public static void CreateStructures(Vector3Int position, byte[,,] map, List<ChunkStructure> structures)
+        public static void CreateStructures(Vector2Int coords, byte[,,] map, List<ChunkStructure> structures)
         {
+            Vector3Int position = VoxelUtils.GetChunkPosition(coords);
+
             foreach (var chunkStructure in structures)
             {
                 Vector3Int pos = chunkStructure.position - position;

@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 using VoxelGame.Utilities;
 
 namespace VoxelGame.Voxel
@@ -47,26 +46,39 @@ namespace VoxelGame.Voxel
             return current;
         }
 
-        public void GenerateMap(Vector3Int position, byte[,,] map)
+        public void GenerateMap(Vector3Int position, ref byte[,,] map)
         {
-            byte[] tmpMapColumn = new byte[VoxelData.chunkHeight];
+            if (map == null)
+                return;
 
-            for (int x = 0; x < VoxelData.chunkWidth; x++)
-                for (int z = 0; z < VoxelData.chunkWidth; z++)
+            int lengthX = map.GetLength(0);
+            int lengthY = map.GetLength(1);
+            int lengthZ = map.GetLength(2);
+
+            if (lengthX == 0 || lengthY == 0 || lengthZ == 0)
+                return;
+
+            byte[] tmpMapColumn = new byte[lengthY];
+
+            for (int x = 0; x < lengthX; x++)
+                for (int z = 0; z < lengthZ; z++)
                 {
                     GenerateMapColumn(position + new Vector3Int(x, 0, z), tmpMapColumn);
 
-                    for (int y = 0; y < VoxelData.chunkHeight; y++)
+                    for (int y = 0; y < lengthY; y++)
                         map[x, y, z] = tmpMapColumn[y];
                 }
+        }
 
+        public void GenerateChunkStructures(Vector2Int coords, ref byte[,,] map)
+        {
             List<ChunkStructure> structures = new List<ChunkStructure>();
 
             for (int x = -1; x <= 1; x++)
                 for (int z = -1; z <= 1; z++)
-                    structures.AddRange(GetChunkStructures(position + new Vector3Int(x, 0, z) * VoxelData.chunkWidth));
+                    structures.AddRange(GetChunkStructures(coords + new Vector2Int(x, z)));
 
-            ChunkStructure.CreateStructures(position,map, structures);
+            ChunkStructure.CreateStructures(coords, map, structures);
         }
 
         private void GenerateMapColumn(Vector3Int position, byte[] mapY)
@@ -80,13 +92,13 @@ namespace VoxelGame.Voxel
             float cachedCont = noiseMount.GetNoise(position.x, position.z);
             float cachedOcean = noiseOcean.GetNoise(position.x, position.z);
 
-            for (int y = VoxelData.chunkHeight - 1; y >= 0; y--)
+            for (int y = mapY.Length - 1; y >= 0; y--)
             {
                 mapY[y] = GetVoxel(position + new Vector3Int(0, y, 0), cachedHeight, cachedCont, cachedOcean);
                 deep = mapY[y] > 0 ? deep + 1 : 0;
                 mapY[y] = FixVoxel(mapY[y], lastVoxel, deep, y);
 
-                if (y < VoxelData.chunkHeight - 1)
+                if (y < mapY.Length - 1)
                 {
                     rndCurrent = Rand(rndCurrent);
                     mapY[y + 1] = FixPrevVoxel(mapY[y], lastVoxel, deep, y, (int)(rndCurrent % 50));
@@ -96,8 +108,10 @@ namespace VoxelGame.Voxel
             }
         }
 
-        private List<ChunkStructure> GetChunkStructures(Vector3Int position)
+        private List<ChunkStructure> GetChunkStructures(Vector2Int coords)
         {
+            Vector3Int position = VoxelUtils.GetChunkPosition(coords);
+
             uint rndCurrent = (uint)(position.x + position.z * 7 + voxelSettings.Seed);
 
             List<ChunkStructure> structures = new List<ChunkStructure>();
@@ -107,7 +121,7 @@ namespace VoxelGame.Voxel
                 {
                     rndCurrent = Rand(rndCurrent);
 
-                    if ((int)(rndCurrent % 100) != 20)
+                    if ((int)(rndCurrent % 200) != 70)
                         continue;
 
                     byte[] mapColumn = new byte[VoxelData.chunkHeight];

@@ -19,19 +19,19 @@ namespace VoxelGame.Voxel
         {
             this.voxelSettings = voxelSettings;
 
-            noiseHeight = new FastNoiseLite(voxelSettings.seed);
+            noiseHeight = new FastNoiseLite(voxelSettings.Seed);
             noiseHeight.SetFrequency(0.005f);
             noiseHeight.SetFractalType(FastNoiseLite.FractalType.FBm);
             noiseHeight.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
             noiseHeight.SetFractalOctaves(3);
 
-            noiseMount = new FastNoiseLite(voxelSettings.seed + 1);
+            noiseMount = new FastNoiseLite(voxelSettings.Seed + 1);
             noiseMount.SetFrequency(0.008f);
             noiseMount.SetFractalType(FastNoiseLite.FractalType.FBm);
             noiseMount.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
             noiseMount.SetFractalOctaves(4);
 
-            noiseOcean = new FastNoiseLite(voxelSettings.seed + 2);
+            noiseOcean = new FastNoiseLite(voxelSettings.Seed + 2);
             noiseOcean.SetFrequency(0.002f);
             noiseOcean.SetFractalType(FastNoiseLite.FractalType.FBm);
             noiseOcean.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
@@ -71,7 +71,7 @@ namespace VoxelGame.Voxel
 
         private void GenerateMapColumn(Vector3Int position, byte[] mapY)
         {
-            uint rndCurrent = (uint)(voxelSettings.seed + position.x + position.z * 7 + voxelSettings.seed * position.x);
+            uint rndCurrent = (uint)(voxelSettings.Seed + position.x + position.z * 7 + voxelSettings.Seed * position.x);
 
             byte lastVoxel = 0;
             int deep = 0;
@@ -98,7 +98,7 @@ namespace VoxelGame.Voxel
 
         private List<ChunkStructure> GetChunkStructures(Vector3Int position)
         {
-            uint rndCurrent = (uint)(position.x + position.z * 7 + voxelSettings.seed);
+            uint rndCurrent = (uint)(position.x + position.z * 7 + voxelSettings.Seed);
 
             List<ChunkStructure> structures = new List<ChunkStructure>();
 
@@ -126,7 +126,7 @@ namespace VoxelGame.Voxel
                         {
                             ChunkStructure s = new ChunkStructure();
                             s.position = new Vector3Int(x, y + 1, z) + position;
-                            s.structure = voxelSettings.structures.GetStructure("tree_1");
+                            s.structure = voxelSettings.Structures.GetStructure("tree_1");
                             structures.Add(s);
 
                             break;

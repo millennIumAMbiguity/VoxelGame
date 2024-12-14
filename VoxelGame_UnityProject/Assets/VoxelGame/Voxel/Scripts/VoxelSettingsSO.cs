@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.Rendering.Universal;
+
+using VoxelGame.Core;
 
 namespace VoxelGame.Voxel
 {
@@ -8,28 +9,92 @@ namespace VoxelGame.Voxel
     public class VoxelSettingsSO : ScriptableObject
     {
         [Header("Main")]
-        public bool generateOnlyInFrustum;
-        public int seed;
-        public int targetFrameRate;
-        public int renderDistance;
-        public float renderScale;
-        public Material chunksMaterial;
-        public Material chunksTranspMaterial;
-        public UniversalRenderPipelineAsset urpAsset;
+        [SerializeField] private bool generateOnlyInFrustum = true;
+        [SerializeField] private int seed = -1;
+        [SerializeField] private int targetFrameRate = 60;
+        [SerializeField] private int renderDistance = 10;
+        [SerializeField] private float renderScale = 1f;
+        [SerializeField] private Material chunksMaterial;
+        [SerializeField] private Material chunksTranspMaterial;
 
         [Header("Voxels and Structures")]
-        public VoxelStructureSO[] structuresSO;
-        public VoxelsPresetSO voxelPresetSO;
-        public VoxelStructures structures;
+        [SerializeField] private VoxelStructureSO[] structuresSO;
+        [SerializeField] private VoxelsPresetSO voxelPresetSO;
+        [SerializeField] private VoxelStructures structures;
 
-        public UnityEvent OnSettingsLoaded = new();
-
-        public enum GeneratorType
+        public bool GenerateOnlyInFrustum => generateOnlyInFrustum;
+        public int Seed
         {
-            DEFAULT,
-            FLAT,
-            GENERATOR
+            get
+            {
+                return seed;
+            }
+            set
+            {
+                if (seed != value)
+                {
+                    seed = value;
+                    PlayerPrefs.SetInt("voxelSeed", Seed);
+                    PlayerPrefs.Save();
+                }
+            }
         }
+        public int TargetFrameRate
+        {
+            get
+            {
+                return targetFrameRate;
+            }
+            set
+            {
+                if (targetFrameRate != value)
+                {
+                    targetFrameRate = value;
+                    GameRenderSettings.SetFrameRate(targetFrameRate);
+                    PlayerPrefs.SetInt("voxelTargetFrameRate", targetFrameRate);
+                    PlayerPrefs.Save();
+                }
+            }
+        }
+        public int RenderDistance
+        {
+            get
+            {
+                return renderDistance;
+            }
+            set
+            {
+                if (renderDistance != value && renderDistance > 3 && renderDistance < 32)
+                {
+                    renderDistance = value;
+                    GameRenderSettings.SetFog((renderDistance - 2f) * VoxelData.chunkWidth, VoxelData.chunkWidth * 1.5f);
+                    PlayerPrefs.SetInt("voxelRenderDistance", renderDistance);
+                    PlayerPrefs.Save();
+                }
+            }
+        }
+        public float RenderScale
+        {
+            get
+            {
+                return renderScale;
+            }
+            set
+            {
+                if (renderScale != value && renderScale >= 0.2f && renderScale <= 1f )
+                {
+                    renderScale = value;
+                    GameRenderSettings.SetRenderScale(renderScale);
+                    PlayerPrefs.SetFloat("voxelRenderScale", renderScale);
+                    PlayerPrefs.Save();
+                }
+            }
+        }
+
+        public Material ChunksMaterial => chunksMaterial;
+        public Material ChunksTranspMaterial => chunksTranspMaterial;
+        public VoxelsPresetSO VoxelPresetSO => voxelPresetSO;
+        public VoxelStructures Structures => structures;
 
         public void Init()
         {
@@ -37,51 +102,20 @@ namespace VoxelGame.Voxel
 
             structures = new VoxelStructures();
             foreach (var structure in structuresSO)
-                structures.RegistryStructure(structure);
+                Structures.RegistryStructure(structure);
 
-            Voxels.Init(voxelPresetSO.Voxels);
+            Voxels.Init(VoxelPresetSO.Voxels);
 
             if (seed == -1)
                 seed = Random.Range(0, 1000000);
-
-            UpdateRenderSettings();
-        }
-
-        public void UpdateRenderSettings()
-        {
-            RenderSettings.fogStartDistance = (renderDistance - 2) * VoxelData.chunkWidth;
-            RenderSettings.fogEndDistance = RenderSettings.fogStartDistance + VoxelData.chunkWidth * 2f;
-
-            if (Application.platform == RuntimePlatform.Android)
-            {
-                Application.targetFrameRate = targetFrameRate;
-            }
-            else
-            {
-                Application.targetFrameRate = -1;
-            }
-
-            urpAsset.renderScale = renderScale;
-
-            Save();
-        }
-
-        public void Save()
-        {
-            PlayerPrefs.SetInt("voxelSeed", seed);
-            PlayerPrefs.SetInt("voxelRenderDistance", renderDistance);
-            PlayerPrefs.SetInt("voxelTargetFrameRate", targetFrameRate);
-            PlayerPrefs.SetFloat("voxelRenderScale", renderScale);
-
-            PlayerPrefs.Save();
         }
 
         public void Load()
         {
-            seed = PlayerPrefs.GetInt("voxelSeed", -1);
-            renderDistance = PlayerPrefs.GetInt("voxelRenderDistance", 12);
-            targetFrameRate = PlayerPrefs.GetInt("voxelTargetFrameRate", 60);
-            renderScale = PlayerPrefs.GetFloat("voxelRenderScale", 1f);
+            Seed = PlayerPrefs.GetInt("voxelSeed", -1);
+            RenderDistance = PlayerPrefs.GetInt("voxelRenderDistance", 12);
+            TargetFrameRate = PlayerPrefs.GetInt("voxelTargetFrameRate", 60);
+            RenderScale = PlayerPrefs.GetFloat("voxelRenderScale", 1f);
         }
 
         public void Reset()

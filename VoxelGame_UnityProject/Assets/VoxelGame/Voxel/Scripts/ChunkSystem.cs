@@ -51,7 +51,7 @@ namespace VoxelGame.Voxel
         
         private void Update()
         {
-            AddChunkControl(2f, voxelSettings.renderDistance);
+            AddChunkControl(2f, voxelSettings.RenderDistance);
             AutoSaveControl(120, 4);
 
             if (Time.frameCount % 6 == 0)
@@ -73,7 +73,7 @@ namespace VoxelGame.Voxel
             {
                 chunkAddTimer = 0f;
                 Vector2Int playerChunk = VoxelUtils.GetChunkCoords(Vector3Int.FloorToInt(cam.position));
-                AddChunks(playerChunk, chunkDistance, voxelSettings.generateOnlyInFrustum, cam.forward);
+                AddChunks(playerChunk, chunkDistance, voxelSettings.GenerateOnlyInFrustum, cam.forward);
                 DeleteChunks(chunkDistance + 2);
             }
         }

@@ -47,7 +47,7 @@ namespace VoxelGame.Voxel
                 chunkElementMain.Init(
                     chunkData.Coords,
                     chunkData.Position,
-                    voxelSettings.chunksMaterial,
+                    voxelSettings.ChunksMaterial,
                     chunkSystem.transform,
                     "chunk main",
                     "Voxel");
@@ -60,7 +60,7 @@ namespace VoxelGame.Voxel
                 chunkElementDecor.Init(
                     chunkData.Coords,
                     chunkData.Position,
-                    voxelSettings.chunksMaterial,
+                    voxelSettings.ChunksMaterial,
                     chunkSystem.transform,
                     "chunk decor",
                     "VoxelDecor");
@@ -73,7 +73,7 @@ namespace VoxelGame.Voxel
                 chunkElementTransp.Init(
                     chunkData.Coords,
                     chunkData.Position,
-                    voxelSettings.chunksTranspMaterial,
+                    voxelSettings.ChunksTranspMaterial,
                     chunkSystem.transform,
                     "chunk transp");
 

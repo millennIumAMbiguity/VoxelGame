@@ -31,19 +31,19 @@ namespace VoxelGame.Core
             if (voxelSettings == null)
                 return;
 
-            if (voxelSettings.voxelPresetSO == null)
+            if (voxelSettings.VoxelPresetSO == null)
                 return;
 
-            for (int i = 1; i < voxelSettings.voxelPresetSO.Voxels.Length; i++)
+            for (int i = 1; i < voxelSettings.VoxelPresetSO.Voxels.Length; i++)
             {
-                if (voxelSettings.voxelPresetSO.Voxels[i] == null)
+                if (voxelSettings.VoxelPresetSO.Voxels[i] == null)
                     continue;
 
-                if (voxelSettings.voxelPresetSO.Voxels[i].name == "")
+                if (voxelSettings.VoxelPresetSO.Voxels[i].name == "")
                     continue;
 
                 GameObject go = Instantiate(buttonPrefab, buttonsPanel);
-                go.name = $"{voxelSettings.voxelPresetSO.Voxels[i].name}";
+                go.name = $"{voxelSettings.VoxelPresetSO.Voxels[i].name}";
                 UIInventoryButton btn = go.GetComponent<UIInventoryButton>();
 
                 btn.Set(Voxels.voxels[i].name, Voxels.voxels[i].sprite);

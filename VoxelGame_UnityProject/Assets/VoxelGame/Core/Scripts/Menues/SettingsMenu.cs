@@ -39,30 +39,27 @@ namespace VoxelGame.Core
 
         public void SetRenderDistance(float distance)
         {
-            voxelSettings.renderDistance = Mathf.Clamp(Mathf.FloorToInt(distance), 6, 18);
-            voxelSettings.UpdateRenderSettings();
+            voxelSettings.RenderDistance = Mathf.Clamp(Mathf.FloorToInt(distance), 6, 18);
         }
 
         public void SetTargetFrameRate(int targetFrameRate)
         {
-            voxelSettings.targetFrameRate = targetFrameRate;
-            voxelSettings.UpdateRenderSettings();
+            voxelSettings.TargetFrameRate = targetFrameRate;
         }
 
         public void SetRenderScale(float renderScale)
         {
-            voxelSettings.renderScale = Mathf.Clamp(renderScale, 0.3f, 1f);
-            voxelSettings.UpdateRenderSettings();
+            voxelSettings.RenderScale = Mathf.Clamp(renderScale, 0.3f, 1f);
         }
 
         private void UpdateButtons()
         {
-            sliderRenderDistance.value = voxelSettings.renderDistance;
-            sliderRenderScale.value = voxelSettings.renderScale;
+            sliderRenderDistance.value = voxelSettings.RenderDistance;
+            sliderRenderScale.value = voxelSettings.RenderScale;
 
-            toggleFps30.Set(voxelSettings.targetFrameRate == 30);
-            toggleFps60.Set(voxelSettings.targetFrameRate == 60);
-            toggleFps120.Set(voxelSettings.targetFrameRate == 120);
+            toggleFps30.Set(voxelSettings.TargetFrameRate == 30);
+            toggleFps60.Set(voxelSettings.TargetFrameRate == 60);
+            toggleFps120.Set(voxelSettings.TargetFrameRate == 120);
         }
 
         public void Reset()

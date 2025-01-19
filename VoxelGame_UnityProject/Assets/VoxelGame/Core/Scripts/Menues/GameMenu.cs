@@ -16,7 +16,7 @@ namespace VoxelGame.Core
             pause.Open(false);
             inventory.Open(false);
 
-            settings.reset.gameObject.SetActive(false);
+            settings.SetResetButton(false);
         }
     }
 }

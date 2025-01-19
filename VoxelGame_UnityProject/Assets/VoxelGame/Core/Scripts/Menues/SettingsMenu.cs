@@ -5,6 +5,7 @@ using Lean.Gui;
 using Zenject;
 
 using VoxelGame.Voxel;
+using Tayx.Graphy;
 
 namespace VoxelGame.Core
 {
@@ -18,12 +19,14 @@ namespace VoxelGame.Core
         [Inject] private readonly VoxelSettingsSO voxelSettings;
         [Inject] private readonly ISaveLoadChunk saveLoad;
 
-        public Slider sliderRenderDistance;
-        public Slider sliderRenderScale;
-        public LeanToggle toggleFps30;
-        public LeanToggle toggleFps60;
-        public LeanToggle toggleFps120;
-        public LeanButton reset;
+        [SerializeField] private Slider sliderRenderDistance;
+        [SerializeField] private Slider sliderRenderScale;
+        [SerializeField] private GameObject togglesFps;
+        [SerializeField] private LeanToggle toggleFps30;
+        [SerializeField] private LeanToggle toggleFps60;
+        [SerializeField] private LeanToggle toggleFps120;
+        [SerializeField] private LeanToggle toggleDebugGraphy;
+        [SerializeField] private LeanButton reset;
 
         public void Open(bool isOpen)
         {
@@ -52,6 +55,24 @@ namespace VoxelGame.Core
             voxelSettings.RenderScale = Mathf.Clamp(renderScale, 0.3f, 1f);
         }
 
+        public void SetDebugGraphy(bool isEnabled)
+        {
+            voxelSettings.DebugGraphy = isEnabled;
+
+            if (GraphyManager.Instance == null)
+                return;
+
+            if (isEnabled)
+                GraphyManager.Instance.Enable();
+            else
+                GraphyManager.Instance.Disable();
+        }
+
+        public void SetResetButton(bool isEnabled)
+        {
+            reset.gameObject.SetActive(isEnabled);
+        }
+
         private void UpdateButtons()
         {
             sliderRenderDistance.value = voxelSettings.RenderDistance;
@@ -60,6 +81,10 @@ namespace VoxelGame.Core
             toggleFps30.Set(voxelSettings.TargetFrameRate == 30);
             toggleFps60.Set(voxelSettings.TargetFrameRate == 60);
             toggleFps120.Set(voxelSettings.TargetFrameRate == 120);
+
+            toggleDebugGraphy.Set(voxelSettings.DebugGraphy);
+
+            togglesFps.SetActive(Application.platform == RuntimePlatform.Android);
         }
 
         public void Reset()

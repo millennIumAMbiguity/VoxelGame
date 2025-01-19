@@ -14,6 +14,7 @@ namespace VoxelGame.Voxel
         [SerializeField] private int targetFrameRate = 60;
         [SerializeField] private int renderDistance = 10;
         [SerializeField] private float renderScale = 1f;
+        [SerializeField] private bool debugGraphy = false;
         [SerializeField] private Material chunksMaterial;
         [SerializeField] private Material chunksTranspMaterial;
 
@@ -91,6 +92,17 @@ namespace VoxelGame.Voxel
             }
         }
 
+        public bool DebugGraphy
+        {
+            get { return debugGraphy; }
+            set
+            {
+                debugGraphy = value;
+                PlayerPrefs.SetInt("voxelDebugGraphy", debugGraphy ? 1 : 0);
+                PlayerPrefs.Save();
+            }
+        }    
+
         public Material ChunksMaterial => chunksMaterial;
         public Material ChunksTranspMaterial => chunksTranspMaterial;
         public VoxelsPresetSO VoxelPresetSO => voxelPresetSO;
@@ -116,6 +128,7 @@ namespace VoxelGame.Voxel
             RenderDistance = PlayerPrefs.GetInt("voxelRenderDistance", 12);
             TargetFrameRate = PlayerPrefs.GetInt("voxelTargetFrameRate", 60);
             RenderScale = PlayerPrefs.GetFloat("voxelRenderScale", 1f);
+            DebugGraphy = PlayerPrefs.GetInt("voxelDebugGraphy", 0) > 0;
         }
 
         public void Reset()

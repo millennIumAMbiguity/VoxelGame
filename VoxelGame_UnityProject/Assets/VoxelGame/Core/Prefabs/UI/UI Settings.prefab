@@ -2125,7 +2125,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2766742896061196516}
   - component: {fileID: 7641659495329030735}
-  - component: {fileID: 7848491049393431415}
   m_Layer: 0
   m_Name: UI Settings
   m_TagString: Untagged
@@ -2170,22 +2169,12 @@ MonoBehaviour:
   ui: {fileID: 3632309403209143216}
   sliderRenderDistance: {fileID: 5490927188471973463}
   sliderRenderScale: {fileID: 977788031735070152}
+  togglesFps: {fileID: 7744121210028115386}
   toggleFps30: {fileID: 3313068667191730232}
   toggleFps60: {fileID: 5295480237613671991}
   toggleFps120: {fileID: 4501851418964181764}
+  toggleDebugGraphy: {fileID: 983042185565516189}
   reset: {fileID: 4941360287858831650}
---- !u!114 &7848491049393431415
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3387450741144449815}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7e49cd18d5e8334c97a39d8409d600e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &3632309403209143216
 GameObject:
   m_ObjectHideFlags: 0
@@ -2639,9 +2628,9 @@ MonoBehaviour:
   onOn:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7848491049393431415}
-        m_TargetAssemblyTypeName: UIDebugMenu, Assembly-CSharp
-        m_MethodName: ShowGraphy
+      - m_Target: {fileID: 7641659495329030735}
+        m_TargetAssemblyTypeName: VoxelGame.Core.SettingsMenu, Assembly-CSharp
+        m_MethodName: SetDebugGraphy
         m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2654,9 +2643,9 @@ MonoBehaviour:
   onOff:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7848491049393431415}
-        m_TargetAssemblyTypeName: UIDebugMenu, Assembly-CSharp
-        m_MethodName: ShowGraphy
+      - m_Target: {fileID: 7641659495329030735}
+        m_TargetAssemblyTypeName: VoxelGame.Core.SettingsMenu, Assembly-CSharp
+        m_MethodName: SetDebugGraphy
         m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

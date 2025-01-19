@@ -129,6 +129,7 @@ namespace VoxelGame.Voxel
         private void UpdateChunkControl(int maxCount = 4)
         {
             List<Vector2Int> chunksList = new List<Vector2Int>();
+            List<Vector2Int> chunksReturnedList = new List<Vector2Int>();
 
             int counter = 0;
             int tries = 32;
@@ -150,7 +151,7 @@ namespace VoxelGame.Voxel
                     }
                     else
                     {
-                        updateQueue.Enqueue(coords);
+                        chunksReturnedList.Add(coords);
                     }
 
                     tries--;
@@ -166,6 +167,11 @@ namespace VoxelGame.Voxel
             {
                 updatingChunks.Add(coords);
                 chunks[coords].Update((c) => RemoveFromUpdatingList(c));
+            }
+
+            foreach (var coords in chunksReturnedList)
+            {
+                updateQueue.Enqueue(coords);
             }
         }
         #endregion

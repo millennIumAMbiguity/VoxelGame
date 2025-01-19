@@ -38,7 +38,6 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1050,12 +1049,12 @@ MonoBehaviour:
   m_RequiresColorTexture: 0
   m_Version: 2
   m_TaaSettings:
-    quality: 1
-    frameInfluence: 0.1
-    jitterScale: 1
-    mipBias: 0
-    varianceClampScale: 0.9
-    contrastAdaptiveSharpening: 0.5
+    m_Quality: 1
+    m_FrameInfluence: 0.1
+    m_JitterScale: 1
+    m_MipBias: 0
+    m_VarianceClampScale: 0.9
+    m_ContrastAdaptiveSharpening: 0.5
 --- !u!114 &330585548
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1194,6 +1193,7 @@ MonoBehaviour:
   m_DeselectOnBackgroundClick: 1
   m_PointerBehavior: 0
   m_CursorLockBehavior: 0
+  m_ScrollDeltaPerTick: 6
 --- !u!1 &342098990
 GameObject:
   m_ObjectHideFlags: 0
@@ -1486,28 +1486,38 @@ PrefabInstance:
     - target: {fileID: 3619346491776584908, guid: 274fb99512404de4086b472c0727cf03,
         type: 3}
       propertyPath: clips.Array.size
-      value: 3
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 3619346491776584908, guid: 274fb99512404de4086b472c0727cf03,
         type: 3}
       propertyPath: clips.Array.data[0]
       value: 
-      objectReference: {fileID: 8300000, guid: e242a07929cb8ae4286b73e25f423027, type: 3}
+      objectReference: {fileID: 8300000, guid: 389149b903a69ac408591bebff43b0b3, type: 3}
     - target: {fileID: 3619346491776584908, guid: 274fb99512404de4086b472c0727cf03,
         type: 3}
       propertyPath: clips.Array.data[1]
       value: 
-      objectReference: {fileID: 8300000, guid: 8ec6c23c8d0ec3341b40824f2644f158, type: 3}
+      objectReference: {fileID: 8300000, guid: e70a1dd09a34db94abbe59ebbf69407f, type: 3}
     - target: {fileID: 3619346491776584908, guid: 274fb99512404de4086b472c0727cf03,
         type: 3}
       propertyPath: clips.Array.data[2]
       value: 
-      objectReference: {fileID: 8300000, guid: 2052ff47d9424e242bfeef83226422ef, type: 3}
+      objectReference: {fileID: 8300000, guid: 53ff938e5d972a54f90cecc9274afbee, type: 3}
     - target: {fileID: 3619346491776584908, guid: 274fb99512404de4086b472c0727cf03,
         type: 3}
       propertyPath: clips.Array.data[3]
       value: 
-      objectReference: {fileID: 8300000, guid: 86fba652edfec834c9f76c486feb4020, type: 3}
+      objectReference: {fileID: 8300000, guid: 2020688a936c6104fae92103bce704ae, type: 3}
+    - target: {fileID: 3619346491776584908, guid: 274fb99512404de4086b472c0727cf03,
+        type: 3}
+      propertyPath: clips.Array.data[4]
+      value: 
+      objectReference: {fileID: 8300000, guid: f1e3553525cdef249898b0b11c729b05, type: 3}
+    - target: {fileID: 3619346491776584908, guid: 274fb99512404de4086b472c0727cf03,
+        type: 3}
+      propertyPath: clips.Array.data[5]
+      value: 
+      objectReference: {fileID: 8300000, guid: 87669388fa682d744954321bf1ef4913, type: 3}
     - target: {fileID: 4498598286589062327, guid: 274fb99512404de4086b472c0727cf03,
         type: 3}
       propertyPath: foostepLenght
@@ -7363,12 +7373,12 @@ PrefabInstance:
         type: 3}
       propertyPath: sounds.Array.data[0].clip
       value: 
-      objectReference: {fileID: 8300000, guid: f0f8694e197308e45877846be856abc5, type: 3}
+      objectReference: {fileID: 8300000, guid: 0ff382b4fe1c8fe4d90e50b4924edcf0, type: 3}
     - target: {fileID: 8926471199153251371, guid: 6a303b8d0c9ef5f418533b771b6d5e90,
         type: 3}
       propertyPath: sounds.Array.data[1].clip
       value: 
-      objectReference: {fileID: 8300000, guid: ee7cd79d3bc71324ea5a56492efd9689, type: 3}
+      objectReference: {fileID: 8300000, guid: 8a50cbc80b958194d97c5aac872f20aa, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

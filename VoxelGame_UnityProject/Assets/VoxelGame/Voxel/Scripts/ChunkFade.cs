@@ -7,7 +7,7 @@ namespace VoxelGame.Voxel
     public class ChunkFade : MonoBehaviour
     {
         private float fadeIntencity = 1f;
-        private float speed = 1f;
+        private float speed = 2f;
         private string fadeValueName = "_FadeIntencity";
 
         private IEnumerator Start()

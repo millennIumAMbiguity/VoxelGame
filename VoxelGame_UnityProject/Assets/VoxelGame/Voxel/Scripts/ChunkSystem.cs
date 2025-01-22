@@ -13,6 +13,13 @@ namespace VoxelGame.Voxel
     {
         public UnityEvent<Vector3Int, byte> OnVoxelDestroyed = new();
 
+        [SerializeField] [Range(0.25f, 4f)] private float addChunksDelay = 2f;
+        [SerializeField] [Range(1, 8)] private int maxLoadedChunksPerUpdate = 2;
+        [SerializeField] [Range(1, 8)] private int maxUpdatedChunksPerUpdate = 3;
+
+        private const int SaveAfterFrames = 120;
+        private const int MaxSavedChunksPerFrame = 4;
+
         private Transform cam;
 
         private readonly Dictionary<Vector2Int, Chunk> chunks = new();
@@ -20,7 +27,8 @@ namespace VoxelGame.Voxel
         private Queue<Vector2Int> updateQueue;
         private List<Vector2Int> updatingChunks;
 
-        private float chunkAddTimer = 2f;
+        private float timerAddChunks = 3f;
+
 
         private VoxelSettingsSO voxelSettings;
         private ISaveLoadChunk saveLoad;
@@ -51,27 +59,27 @@ namespace VoxelGame.Voxel
         
         private void Update()
         {
-            AddChunkControl(2f, voxelSettings.RenderDistance);
-            AutoSaveControl(120, 4);
+            AddChunkControl(addChunksDelay, voxelSettings.RenderDistance);
+            AutoSaveControl(SaveAfterFrames, MaxSavedChunksPerFrame);
 
             if (Time.frameCount % 6 == 0)
             {
-                LoadChunkControl(2);
+                LoadChunkControl(maxLoadedChunksPerUpdate);
                 SortChunkUpdateQueue();
             }
             else
             {
-                UpdateChunkControl(3);
+                UpdateChunkControl(maxUpdatedChunksPerUpdate);
             }
         }
 
         #region Chunk control
         private void AddChunkControl(float delaySeconds = 2f, int chunkDistance = 12)
         {
-            chunkAddTimer += Time.deltaTime;
-            if (chunkAddTimer > delaySeconds)
+            timerAddChunks += Time.deltaTime;
+            if (timerAddChunks > delaySeconds)
             {
-                chunkAddTimer = 0f;
+                timerAddChunks = 0f;
                 Vector2Int playerChunk = VoxelUtils.GetChunkCoords(Vector3Int.FloorToInt(cam.position));
                 AddChunks(playerChunk, chunkDistance, voxelSettings.GenerateOnlyInFrustum, cam.forward);
                 DeleteChunks(chunkDistance + 2);

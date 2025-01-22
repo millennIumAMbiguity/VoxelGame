@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 using Zenject;
@@ -11,13 +12,15 @@ namespace VoxelGame.Voxel
     {
         public bool IsLoaded { get; private set; }
 
-        private IChunkView view;
-        private ChunkData data;
+        private bool saveFlag;
 
+        private CancellationTokenSource cancellationTokenSource;
+        private CancellationToken cancellationToken;
+
+        private ChunkData data;
+        private IChunkView view;
         private readonly IGenerator generator;
         private readonly ISaveLoadChunk saveLoad;
-
-        private bool saveFlag;
 
         public Chunk(ChunkData data, IChunkView view, IGenerator generator, ISaveLoadChunk saveLoad)
         {
@@ -25,6 +28,9 @@ namespace VoxelGame.Voxel
             this.data = data;
             this.generator = generator;
             this.saveLoad = saveLoad;
+
+            cancellationTokenSource = new CancellationTokenSource();
+            cancellationToken = cancellationTokenSource.Token;
         }
 
         public void Load(Action<Vector2Int> onLoadCallback)
@@ -43,7 +49,7 @@ namespace VoxelGame.Voxel
                 {
                     GenerateMap();
                     CalculateLight();
-                }).GetAwaiter().OnCompleted(() =>
+                }, cancellationToken).GetAwaiter().OnCompleted(() =>
                 {
                     IsLoaded = true;
 
@@ -90,6 +96,8 @@ namespace VoxelGame.Voxel
 
         public void Delete()
         {
+            cancellationTokenSource?.Cancel();
+
             data = null;
             view.Delete();
             view = null;

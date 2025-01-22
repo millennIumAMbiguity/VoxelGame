@@ -1,6 +1,5 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -14,6 +13,9 @@ namespace VoxelGame.Voxel
         private ChunkElement currentChunkElement;
         private ChunkData chunkData;
 
+        private CancellationTokenSource cancellationTokenSource;
+        private CancellationToken cancellationToken;
+
         private readonly ChunkSystem chunkSystem;
         private readonly VoxelSettingsSO voxelSettings;
 
@@ -25,6 +27,9 @@ namespace VoxelGame.Voxel
             chunkElementMain = new ChunkElement(hasCollider: true);
             chunkElementDecor = new ChunkElement(hasCollider: false);
             chunkElementTransp = new ChunkElement(hasCollider: false);
+
+            cancellationTokenSource = new CancellationTokenSource();
+            cancellationToken = cancellationTokenSource.Token;
         }
 
         public void Update(ChunkData chunkData, Action<Vector2Int> onUpdateCallback)
@@ -80,7 +85,7 @@ namespace VoxelGame.Voxel
                 chunkElementTransp.AddFadeAnimation();
             }
 
-            Task.Run(() => Generate()).GetAwaiter().OnCompleted(() =>
+            Task.Run(() => Generate(), cancellationToken).GetAwaiter().OnCompleted(() =>
             {
                 if (chunkData != null)
                 {
@@ -95,6 +100,8 @@ namespace VoxelGame.Voxel
 
         public void Delete()
         {
+            cancellationTokenSource?.Cancel();
+
             chunkData = null;
             currentChunkElement = null;
 

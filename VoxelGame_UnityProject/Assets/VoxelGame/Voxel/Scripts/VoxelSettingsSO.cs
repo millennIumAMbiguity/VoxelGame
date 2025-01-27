@@ -118,8 +118,8 @@ namespace VoxelGame.Voxel
 
             Voxels.Init(VoxelPresetSO.Voxels);
 
-            if (seed == -1)
-                seed = Random.Range(0, 1000000);
+            if (Seed == -1)
+                Seed = Random.Range(0, 1000000);
         }
 
         public void Load()

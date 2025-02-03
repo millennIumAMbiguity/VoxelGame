@@ -458,7 +458,7 @@ Transform:
   m_GameObject: {fileID: 5414763677578206368}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.5, z: 0}
+  m_LocalPosition: {x: 0, y: 0.8, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -545,7 +545,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 248904249869742445}
-  - component: {fileID: 5868255184029982001}
+  - component: {fileID: 5082575782578025946}
   - component: {fileID: 4498598286589062327}
   - component: {fileID: 885518871997492856}
   m_Layer: 0
@@ -574,32 +574,22 @@ Transform:
   - {fileID: 2249071245130425731}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!143 &5868255184029982001
-CharacterController:
+--- !u!114 &5082575782578025946
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6581951595687796864}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Height: 1.6
-  m_Radius: 0.25
-  m_SlopeLimit: 45
-  m_StepOffset: 0.3
-  m_SkinWidth: 0.08
-  m_MinMoveDistance: 0
-  m_Center: {x: 0, y: 0.82, z: 0}
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1604bde56ee6e814d867d96adfd6933a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Size: {x: 0.5, y: 1.8, z: 0.5}
+  Center: {x: 0, y: 0, z: 0}
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!114 &4498598286589062327
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -621,12 +611,6 @@ MonoBehaviour:
   gravity: -30
   jumpTimeout: 0.1
   fallTimeout: 0.075
-  grounded: 1
-  groundedOffset: -0.14
-  groundedRadius: 0.28
-  groundLayers:
-    serializedVersion: 2
-    m_Bits: 513
   cameraTarget: {fileID: 560533993783073065}
   cameraFov: 70
   cameraFovSprint: 80
@@ -637,7 +621,6 @@ MonoBehaviour:
   cameraWalkOffsetMultiplier: 0.1
   virtualCamera: {fileID: 5539336692107230309}
   rndSoundFootsteps: {fileID: 3619346491776584908}
-  action: {fileID: 885518871997492856}
 --- !u!114 &885518871997492856
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -650,4 +633,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 064556d00ec5967428b3b10259f7cb65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cam: {fileID: 2142173768732689960}

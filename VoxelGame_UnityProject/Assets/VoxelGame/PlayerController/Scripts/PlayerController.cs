@@ -10,6 +10,7 @@ using Cinemachine;
 
 namespace VoxelGame.Player
 {
+    [RequireComponent(typeof(CharacterBoxController))]
     public class PlayerController : MonoBehaviour
     {
         [Header("Move")]
@@ -22,10 +23,6 @@ namespace VoxelGame.Player
         [SerializeField] private float gravity = -15f;
         [SerializeField] private float jumpTimeout = 0.5f;
         [SerializeField] private float fallTimeout = 0.15f;
-        [SerializeField] private bool grounded = true;
-        [SerializeField] private float groundedOffset = -0.14f;
-        [SerializeField] private float groundedRadius = 0.28f;
-        [SerializeField] private LayerMask groundLayers;
         
         [Header("Camera")]
         [SerializeField] private Transform cameraTarget;
@@ -64,7 +61,7 @@ namespace VoxelGame.Player
 
         private const float threshold = 0.01f;
 
-        private CharacterController controller;
+        private CharacterBoxController controller;
         private Transform mainCamera;
         private PlayerAction action;
 
@@ -79,7 +76,7 @@ namespace VoxelGame.Player
             }
 
             cinemachineTargetYaw = cameraTarget.rotation.eulerAngles.y;
-            controller = GetComponent<CharacterController>();
+            controller = GetComponent<CharacterBoxController>();
             action = GetComponent<PlayerAction>();
             action.SetCamera(mainCamera);
 
@@ -106,7 +103,6 @@ namespace VoxelGame.Player
         private void Update()
         {
             JumpAndGravity();
-            GroundedCheck();
             Move();
         }
 
@@ -117,7 +113,7 @@ namespace VoxelGame.Player
 
         private void JumpAndGravity()
         {
-            if (grounded)
+            if (controller.isGrounded)
             {
                 fallTimeoutDelta = fallTimeout;
 
@@ -154,17 +150,11 @@ namespace VoxelGame.Player
             }
         }
 
-        private void GroundedCheck()
-        {
-            Vector3 spherePosition = transform.position - Vector3.down * groundedOffset;
-            grounded = Physics.CheckSphere(spherePosition, groundedRadius, groundLayers, QueryTriggerInteraction.Ignore);
-        }
-
         private void Move()
         {
             Vector2 moveInput = input.PlayerInputs.Move.Value;
 
-            if (moveInput.magnitude > 0.5f && input.PlayerInputs.Run.IsPressed && grounded)
+            if (moveInput.magnitude > 0.5f && input.PlayerInputs.Run.IsPressed && controller.isGrounded)
                 runMode = true;
 
             if (moveInput.magnitude <0.25f && runMode)
@@ -209,12 +199,18 @@ namespace VoxelGame.Player
             Vector3 targetDirection = Quaternion.Euler(0.0f, targetRotation, 0.0f) * Vector3.forward;
 
             controller.Move(targetDirection.normalized * (speed * Time.deltaTime) +
-                             new Vector3(0.0f, verticalVelocity, 0.0f) * Time.deltaTime);
+                             new Vector3(0.0f, verticalVelocity * Time.deltaTime, 0.0f));
 
-            cameraAmplitudeGain = Mathf.MoveTowards(cameraAmplitudeGain, grounded ? speed * cameraWalkOffsetMultiplier : 0f, Time.deltaTime * 4);
+            // cancel jump if block above
+            if (controller.hitHead)
+            {
+                verticalVelocity = Mathf.Min(verticalVelocity, 0f);
+            }
+
+            cameraAmplitudeGain = Mathf.MoveTowards(cameraAmplitudeGain, controller.isGrounded ? speed * cameraWalkOffsetMultiplier : 0f, Time.deltaTime * 4);
             virtualCamera.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>().m_AmplitudeGain = cameraAmplitudeGain;
 
-            if (speed > 0.5f && grounded)
+            if (speed > 0.5f && controller.isGrounded)
             {
                 rndSoundFootsteps.PlayRandomSound(2.75f / speed);
             }

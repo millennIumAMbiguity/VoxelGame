@@ -5,7 +5,7 @@ using UnityEngine;
 public class CharacterBoxController : MonoBehaviour
 {
 
-    private const float COLLISION_OFFSET = 0.01f;
+    private const float COLLISION_MARGIN = 0.01f;
     
     public Vector3 Size = new Vector3(1, 1, 1);
     public Vector3 Center = new Vector3(0, 0, 0);
@@ -56,27 +56,27 @@ public class CharacterBoxController : MonoBehaviour
         // Check each axis separately
         if (motion.x != 0)
         {
-            if (Physics.BoxCast(pos, size, Vector3.right * Mathf.Sign(motion.x), out RaycastHit hit, Quaternion.identity, Mathf.Abs(motion.x), _collisionLayers))
+            if (Physics.BoxCast(pos, size, Vector3.right * Mathf.Sign(motion.x), out RaycastHit hit, Quaternion.identity, Mathf.Abs(motion.x) + COLLISION_MARGIN, _collisionLayers))
             {
-                motion.x = Mathf.Sign(motion.x) * (hit.distance - COLLISION_OFFSET);
+                motion.x = Mathf.Sign(motion.x) * (hit.distance - COLLISION_MARGIN);
             }
         }
 
         if (motion.y != 0)
         {
-            if (Physics.BoxCast(pos, size, Vector3.up * Mathf.Sign(motion.y), out RaycastHit hit, Quaternion.identity, Mathf.Abs(motion.y), _collisionLayers))
+            if (Physics.BoxCast(pos, size, Vector3.up * Mathf.Sign(motion.y), out RaycastHit hit, Quaternion.identity, Mathf.Abs(motion.y) + COLLISION_MARGIN, _collisionLayers))
             {
                 isGrounded = motion.y < 0;
                 hitHead = !isGrounded;
-                motion.y =  Mathf.Sign(motion.y) * (hit.distance - COLLISION_OFFSET);
+                motion.y =  Mathf.Sign(motion.y) * (hit.distance - COLLISION_MARGIN);
             }
         }
 
         if (motion.z != 0)
         {
-            if (Physics.BoxCast(pos, size, Vector3.forward * Mathf.Sign(motion.z), out RaycastHit hit, Quaternion.identity, Mathf.Abs(motion.z), _collisionLayers))
+            if (Physics.BoxCast(pos, size, Vector3.forward * Mathf.Sign(motion.z), out RaycastHit hit, Quaternion.identity, Mathf.Abs(motion.z) + COLLISION_MARGIN, _collisionLayers))
             {
-                motion.z = Mathf.Sign(motion.z) * (hit.distance - COLLISION_OFFSET);
+                motion.z = Mathf.Sign(motion.z) * (hit.distance - COLLISION_MARGIN);
             }
         }
 

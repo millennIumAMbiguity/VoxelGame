@@ -10,8 +10,8 @@ namespace VoxelGame.Player
 		public Vector3 Size = new Vector3(1, 1, 1);
 		public Vector3 Center = new Vector3(0, 0, 0);
 
-		[NonSerialized] private Vector3 _lastPosition;
-		[NonSerialized] private LayerMask _collisionLayers;
+		[NonSerialized] private Vector3 lastPosition;
+		[NonSerialized] private LayerMask collisionLayers;
 
 		public Vector3 velocity { get; private set; }
 		public bool isGrounded { get; private set; }
@@ -19,6 +19,8 @@ namespace VoxelGame.Player
 
 		private void Start()
 		{
+			lastPosition = transform.position;
+
 			UpdateCollisionLayers();
 		}
 
@@ -27,12 +29,12 @@ namespace VoxelGame.Player
 		/// </summary>
 		public void UpdateCollisionLayers()
 		{
-			_collisionLayers = 0;
+			collisionLayers = 0;
 			for (int j = 0; j < 32; j++)
 			{
 				if (!Physics.GetIgnoreLayerCollision(gameObject.layer, j))
 				{
-					_collisionLayers |= 1 << j;
+					collisionLayers |= 1 << j;
 				}
 			}
 		}
@@ -54,7 +56,7 @@ namespace VoxelGame.Player
 			// Check each axis separately
 			if (motion.x != 0)
 			{
-				if (Physics.BoxCast(pos, size, Vector3.right * Mathf.Sign(motion.x), out RaycastHit hit, Quaternion.identity, Mathf.Abs(motion.x) + COLLISION_MARGIN, _collisionLayers))
+				if (Physics.BoxCast(pos, size, Vector3.right * Mathf.Sign(motion.x), out RaycastHit hit, Quaternion.identity, Mathf.Abs(motion.x) + COLLISION_MARGIN, collisionLayers))
 				{
 					motion.x = Mathf.Sign(motion.x) * (hit.distance - COLLISION_MARGIN);
 				}
@@ -62,7 +64,7 @@ namespace VoxelGame.Player
 
 			if (motion.y != 0)
 			{
-				if (Physics.BoxCast(pos, size, Vector3.up * Mathf.Sign(motion.y), out RaycastHit hit, Quaternion.identity, Mathf.Abs(motion.y) + COLLISION_MARGIN, _collisionLayers))
+				if (Physics.BoxCast(pos, size, Vector3.up * Mathf.Sign(motion.y), out RaycastHit hit, Quaternion.identity, Mathf.Abs(motion.y) + COLLISION_MARGIN, collisionLayers))
 				{
 					isGrounded = motion.y < 0;
 					hitHead = !isGrounded;
@@ -72,7 +74,7 @@ namespace VoxelGame.Player
 
 			if (motion.z != 0)
 			{
-				if (Physics.BoxCast(pos, size, Vector3.forward * Mathf.Sign(motion.z), out RaycastHit hit, Quaternion.identity, Mathf.Abs(motion.z) + COLLISION_MARGIN, _collisionLayers))
+				if (Physics.BoxCast(pos, size, Vector3.forward * Mathf.Sign(motion.z), out RaycastHit hit, Quaternion.identity, Mathf.Abs(motion.z) + COLLISION_MARGIN, collisionLayers))
 				{
 					motion.z = Mathf.Sign(motion.z) * (hit.distance - COLLISION_MARGIN);
 				}
@@ -82,10 +84,10 @@ namespace VoxelGame.Player
 			transform.position += motion;
 
 			// Calculate velocity
-			velocity = (transform.position - _lastPosition) / Time.deltaTime;
+			velocity = (transform.position - lastPosition) / Time.deltaTime;
 
 			// Store the new position for the next frame
-			_lastPosition = transform.position;
+			lastPosition = transform.position;
 		}
 
 #if UNITY_EDITOR

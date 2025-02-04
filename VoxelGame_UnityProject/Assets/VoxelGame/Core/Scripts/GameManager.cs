@@ -67,7 +67,10 @@ namespace VoxelGame.Core
                         Vector3Int pos = new Vector3Int(8, y, 8);
                         if (chunk.GetVoxel(pos) > 0)
                         {
-                            player.transform.position = pos + Vector3.up + Vector3.one * 0.5f;
+                            Vector3Int prevPos = new Vector3Int(pos.x, pos.y + 1, pos.z);
+                            Vector3 voxelCenterOffset = Vector3.one * 0.5f;
+                            Vector3 playerOffset = new Vector3(0f, 1f, 0f);
+                            player.transform.position = prevPos + voxelCenterOffset + playerOffset;
                             findPlace = true;
                             yield return new WaitForSeconds(1f);
                             break;

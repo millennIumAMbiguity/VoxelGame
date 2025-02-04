@@ -153,23 +153,25 @@ namespace VoxelGame.Player
         private void Move()
         {
             Vector2 moveInput = input.PlayerInputs.Move.Value;
+            float inputMagnitude = moveInput.magnitude;
 
-            if (moveInput.magnitude > 0.5f && input.PlayerInputs.Run.IsPressed && controller.isGrounded)
+            if (inputMagnitude > 0.5f && input.PlayerInputs.Run.IsPressed && controller.isGrounded)
                 runMode = true;
 
-            if (moveInput.magnitude <0.25f && runMode)
+            if (inputMagnitude <0.25f && runMode)
                 runMode = false;
 
             virtualCamera.m_Lens.FieldOfView = Mathf.Lerp(virtualCamera.m_Lens.FieldOfView, runMode ? cameraFovSprint : cameraFov, Time.deltaTime * 2f);
+            float targetSpeed = 0.0f;
 
-            float targetSpeed = runMode ? sprintSpeed : moveSpeed;
-
-            if (moveInput == Vector2.zero) targetSpeed = 0.0f;
+            if (moveInput != Vector2.zero)
+            {
+                targetSpeed = runMode ? sprintSpeed : moveSpeed;
+            }
 
             float currentHorizontalSpeed = new Vector3(controller.velocity.x, 0.0f, controller.velocity.z).magnitude;
 
             float speedOffset = 0.1f;
-            float inputMagnitude = true ? moveInput.magnitude : 1f;
 
             if (currentHorizontalSpeed < targetSpeed - speedOffset ||
                 currentHorizontalSpeed > targetSpeed + speedOffset)

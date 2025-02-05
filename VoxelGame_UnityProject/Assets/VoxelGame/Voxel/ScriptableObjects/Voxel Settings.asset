@@ -16,7 +16,7 @@ MonoBehaviour:
   seed: 874891
   targetFrameRate: 60
   renderDistance: 12
-  renderScale: 0.4470228
+  renderScale: 1
   chunksMaterial: {fileID: 2100000, guid: 4f5eb5291eade724196053438d603589, type: 2}
   chunksTranspMaterial: {fileID: 2100000, guid: 380953990a38bc14eb62b62523c1bbf8,
     type: 2}

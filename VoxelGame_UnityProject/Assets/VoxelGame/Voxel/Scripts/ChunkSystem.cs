@@ -45,7 +45,7 @@ namespace VoxelGame.Voxel
         private void Update()
         {
             AutoSaveControl(SaveAfterFrames, MaxSavedChunksPerFrame);
-            chunkControl.Update(cam, voxelSettings.RenderDistance, voxelSettings.GenerateOnlyInFrustum);
+            chunkControl.UpdateChunks(cam, voxelSettings.RenderDistance, voxelSettings.GenerateOnlyInFrustum);
         }
 
         private void AutoSaveControl(int frameCountDelay = 60, int maxSavedChunks = 4)

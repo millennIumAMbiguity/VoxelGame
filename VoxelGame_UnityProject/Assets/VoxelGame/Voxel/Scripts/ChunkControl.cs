@@ -25,7 +25,7 @@ namespace VoxelGame.Voxel
             updatingChunks = new List<Vector2Int>();
         }
 
-        public void Update(Transform cam, int renderDistance, bool inFrustum)
+        public void UpdateChunks(Transform cam, int renderDistance, bool inFrustum)
         {
             AddChunkControl(cam, renderDistance, inFrustum);
 

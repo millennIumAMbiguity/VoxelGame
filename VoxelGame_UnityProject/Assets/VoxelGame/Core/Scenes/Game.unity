@@ -404,6 +404,7 @@ GameObject:
   - component: {fileID: 169958862}
   - component: {fileID: 169958861}
   - component: {fileID: 169958863}
+  - component: {fileID: 169958864}
   m_Layer: 0
   m_Name: Zenject
   m_TagString: Untagged
@@ -454,6 +455,7 @@ MonoBehaviour:
   _monoInstallers:
   - {fileID: 169958863}
   - {fileID: 169958861}
+  - {fileID: 169958864}
   _installerPrefabs: []
   _autoRun: 1
   OnPreInstall:
@@ -484,6 +486,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   voxelSettings: {fileID: 11400000, guid: ef5bb52c1d82c63469eabc6f3f3b20d2, type: 2}
+--- !u!114 &169958864
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 169958859}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53f6726a60e01d94994498c5535c0754, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &177297827
 GameObject:
   m_ObjectHideFlags: 0
@@ -2488,6 +2502,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 6581951595687796864, guid: 274fb99512404de4086b472c0727cf03,
+        type: 3}
+      propertyPath: m_Layer
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 6581951595687796864, guid: 274fb99512404de4086b472c0727cf03,
         type: 3}
@@ -12787,17 +12806,17 @@ PrefabInstance:
     - target: {fileID: 923511885689083492, guid: 4841b6d5f058ad8408e998caa61ea0a7,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 29.038391
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 923511885689083492, guid: 4841b6d5f058ad8408e998caa61ea0a7,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 57.24143
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 923511885689083492, guid: 4841b6d5f058ad8408e998caa61ea0a7,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -18.37723
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 923511885689083492, guid: 4841b6d5f058ad8408e998caa61ea0a7,
         type: 3}

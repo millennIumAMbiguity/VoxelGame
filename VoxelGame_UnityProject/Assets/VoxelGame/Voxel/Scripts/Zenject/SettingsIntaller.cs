@@ -1,9 +1,7 @@
-using UnityEngine;
 using Zenject;
+using UnityEngine;
 
-using VoxelGame.Voxel;
-
-namespace VoxelGame.Core
+namespace VoxelGame.Voxel
 {
     public class SettingsIntaller : MonoInstaller
     {

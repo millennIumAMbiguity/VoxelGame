@@ -10,8 +10,6 @@ namespace VoxelGame.Voxel
     {
         public UnityEvent<Vector3Int, byte> OnVoxelDestroyed = new();
         public Dictionary<Vector2Int, Chunk> Chunks {get; set;}
-        private const int SaveAfterFrames = 120;
-        private const int MaxSavedChunksPerFrame = 4;
         private Transform cam;
         private VoxelSettingsSO voxelSettings;
         private ISaveLoadChunk saveLoad;
@@ -44,32 +42,8 @@ namespace VoxelGame.Voxel
         
         private void Update()
         {
-            AutoSaveControl(SaveAfterFrames, MaxSavedChunksPerFrame);
+            AutoSaveControl.Update(saveLoad, Chunks);
             chunkControl.UpdateChunks(cam, voxelSettings.RenderDistance, voxelSettings.GenerateOnlyInFrustum);
-        }
-
-        private void AutoSaveControl(int frameCountDelay = 60, int maxSavedChunks = 4)
-        {
-            if (Time.frameCount % frameCountDelay != 0)
-                return;
-
-            int savedChunks = 0;
-
-            foreach (var chunk in Chunks.Values)
-            {
-                if (chunk != null && chunk.IsLoaded)
-                {
-                    if (chunk.Save())
-                    {
-                        savedChunks++;
-                    }
-
-                    if (savedChunks >= maxSavedChunks)
-                        break;
-                }
-            }
-
-            saveLoad.Save(2);
         }
 
         public void AddChunk(Vector2Int coords)

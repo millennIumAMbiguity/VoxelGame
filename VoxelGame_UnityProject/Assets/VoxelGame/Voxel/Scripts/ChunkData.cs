@@ -18,16 +18,5 @@ namespace VoxelGame.Voxel
             map = new byte[VoxelData.chunkWidth, VoxelData.chunkHeight, VoxelData.chunkWidth];
             light = new byte[VoxelData.chunkWidth, VoxelData.chunkHeight, VoxelData.chunkWidth];
         }
-
-        public bool SetVoxel(Vector3Int pos, byte voxel)
-        {
-            if (VoxelUtils.IsVoxelInChunk(pos) && map[pos.x, pos.y, pos.z] != voxel)
-            {
-                map[pos.x, pos.y, pos.z] = voxel;
-                return true;
-            }
-
-            return false;
-        }
     }
 }

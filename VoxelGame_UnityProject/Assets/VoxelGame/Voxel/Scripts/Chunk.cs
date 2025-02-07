@@ -22,10 +22,10 @@ namespace VoxelGame.Voxel
         private readonly IGenerator generator;
         private readonly ISaveLoadChunk saveLoad;
 
-        public Chunk(ChunkData data, IChunkView view, IGenerator generator, ISaveLoadChunk saveLoad)
+        public Chunk(Vector2Int coords, IChunkView view, IGenerator generator, ISaveLoadChunk saveLoad)
         {
             this.view = view;
-            this.data = data;
+            this.data = new ChunkData(coords);
             this.generator = generator;
             this.saveLoad = saveLoad;
 
@@ -110,10 +110,19 @@ namespace VoxelGame.Voxel
 
         public bool SetVoxel(Vector3Int pos, byte voxel, bool setSaveFlag = false)
         {
+            if (data == null)
+                return false;
+
             if (setSaveFlag)
                 saveFlag = true;
 
-            return data.SetVoxel(pos, voxel);
+            if (VoxelUtils.IsVoxelInChunk(pos) && data.map[pos.x, pos.y, pos.z] != voxel)
+            {
+                data.map[pos.x, pos.y, pos.z] = voxel;
+                return true;
+            }
+
+            return false;
         }
 
         public byte GetLight(Vector3Int pos)
@@ -164,7 +173,7 @@ namespace VoxelGame.Voxel
             generator.GenerateChunkStructures(data.Coords, ref data.map);
         }
 
-        public class Factory : PlaceholderFactory<ChunkData, Chunk>
+        public class Factory : PlaceholderFactory<Vector2Int, Chunk>
         {
         }
     }

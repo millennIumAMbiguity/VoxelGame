@@ -228,7 +228,7 @@ namespace VoxelGame.Voxel
 
                     if (!chunks.ContainsKey(currentCoords))
                     {
-                        var chunk = chunkFactory.Create(new(currentCoords));
+                        var chunk = chunkFactory.Create(currentCoords);
                         chunks.Add(currentCoords, chunk);
 
                         if (loadQueue.Contains(currentCoords))

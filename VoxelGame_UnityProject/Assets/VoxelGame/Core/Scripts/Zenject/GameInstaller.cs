@@ -1,8 +1,7 @@
 using Zenject;
-
+using UnityEngine;
 using VoxelGame.Voxel;
 using VoxelGame.Input;
-using VoxelGame.Core;
 
 namespace VoxelGame.Core
 {
@@ -24,7 +23,7 @@ namespace VoxelGame.Core
         {
             Container.Bind<IGenerator>().To<DefaultGenerator>().AsSingle();
             Container.Bind<IChunkView>().To<ChunkView>().FromNew().AsTransient().Lazy();
-            Container.BindFactory<ChunkData, Chunk, Chunk.Factory>();
+            Container.BindFactory<Vector2Int, Chunk, Chunk.Factory>();
             Container.Bind<ChunkSystem>().FromComponentInHierarchy().AsSingle();
         }
 

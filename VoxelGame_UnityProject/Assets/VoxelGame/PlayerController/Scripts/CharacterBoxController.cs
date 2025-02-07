@@ -5,8 +5,6 @@ namespace VoxelGame.Player
 {
 	public class CharacterBoxController : MonoBehaviour
 	{
-		private const float COLLISION_MARGIN = 0.01f;
-
 		public Vector3 Size = new Vector3(1, 1, 1);
 		public Vector3 Center = new Vector3(0, 0, 0);
 
@@ -56,27 +54,27 @@ namespace VoxelGame.Player
 			// Check each axis separately
 			if (motion.x != 0)
 			{
-				if (Physics.BoxCast(pos, size, Vector3.right * Mathf.Sign(motion.x), out RaycastHit hit, Quaternion.identity, Mathf.Abs(motion.x) + COLLISION_MARGIN, collisionLayers))
+				if (Physics.BoxCast(pos, new Vector3(0, size.y, size.z), Vector3.right * Mathf.Sign(motion.x), out RaycastHit hit, Quaternion.identity, Mathf.Abs(motion.x) + size.x, collisionLayers))
 				{
-					motion.x = Mathf.Sign(motion.x) * (hit.distance - COLLISION_MARGIN);
+					motion.x = Mathf.Sign(motion.x) * (hit.distance - size.x);
 				}
 			}
 
 			if (motion.y != 0)
 			{
-				if (Physics.BoxCast(pos, size, Vector3.up * Mathf.Sign(motion.y), out RaycastHit hit, Quaternion.identity, Mathf.Abs(motion.y) + COLLISION_MARGIN, collisionLayers))
+				if (Physics.BoxCast(pos, new Vector3(size.x, 0, size.z), Vector3.up * Mathf.Sign(motion.y), out RaycastHit hit, Quaternion.identity, Mathf.Abs(motion.y) + size.y, collisionLayers))
 				{
 					isGrounded = motion.y < 0;
 					hitHead = !isGrounded;
-					motion.y = Mathf.Sign(motion.y) * (hit.distance - COLLISION_MARGIN);
+					motion.y = Mathf.Sign(motion.y) * (hit.distance - size.y);
 				}
 			}
 
 			if (motion.z != 0)
 			{
-				if (Physics.BoxCast(pos, size, Vector3.forward * Mathf.Sign(motion.z), out RaycastHit hit, Quaternion.identity, Mathf.Abs(motion.z) + COLLISION_MARGIN, collisionLayers))
+				if (Physics.BoxCast(pos, new Vector3(size.x, size.y, 0), Vector3.forward * Mathf.Sign(motion.z), out RaycastHit hit, Quaternion.identity, Mathf.Abs(motion.z) + size.z, collisionLayers))
 				{
-					motion.z = Mathf.Sign(motion.z) * (hit.distance - COLLISION_MARGIN);
+					motion.z = Mathf.Sign(motion.z) * (hit.distance - size.z);
 				}
 			}
 

@@ -58,9 +58,7 @@ namespace VoxelGame.Player
         private bool IsVoxelInPlayer(Vector3Int pos)
         {
             Vector3 center = pos + Vector3.one * 0.5f;
-            Vector3 bodyCenter = transform.position + Vector3.up * 1.6f / 2f;
-
-            return Vector3.Distance(center, bodyCenter) < 1.2f;
+            return Vector3.Distance(center, transform.position) < 1.2f;
         }
     }
 }

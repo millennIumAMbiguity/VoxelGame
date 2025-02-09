@@ -113,7 +113,7 @@ namespace VoxelGame.Player
 
         private void JumpAndGravity()
         {
-            if (controller.isGrounded)
+            if (controller.IsGrounded)
             {
                 fallTimeoutDelta = fallTimeout;
 
@@ -155,7 +155,7 @@ namespace VoxelGame.Player
             Vector2 moveInput = input.PlayerInputs.Move.Value;
             float inputMagnitude = moveInput.magnitude;
 
-            if (inputMagnitude > 0.5f && input.PlayerInputs.Run.IsPressed && controller.isGrounded)
+            if (inputMagnitude > 0.5f && input.PlayerInputs.Run.IsPressed && controller.IsGrounded)
                 runMode = true;
 
             if (inputMagnitude <0.25f && runMode)
@@ -169,7 +169,7 @@ namespace VoxelGame.Player
                 targetSpeed = runMode ? sprintSpeed : moveSpeed;
             }
 
-            float currentHorizontalSpeed = new Vector3(controller.velocity.x, 0.0f, controller.velocity.z).magnitude;
+            float currentHorizontalSpeed = new Vector3(controller.Velocity.x, 0.0f, controller.Velocity.z).magnitude;
 
             float speedOffset = 0.1f;
 
@@ -204,15 +204,15 @@ namespace VoxelGame.Player
                              new Vector3(0.0f, verticalVelocity * Time.deltaTime, 0.0f));
 
             // cancel jump if block above
-            if (controller.hitHead)
+            if (controller.HitHead)
             {
                 verticalVelocity = Mathf.Min(verticalVelocity, 0f);
             }
 
-            cameraAmplitudeGain = Mathf.MoveTowards(cameraAmplitudeGain, controller.isGrounded ? speed * cameraWalkOffsetMultiplier : 0f, Time.deltaTime * 4);
+            cameraAmplitudeGain = Mathf.MoveTowards(cameraAmplitudeGain, controller.IsGrounded ? speed * cameraWalkOffsetMultiplier : 0f, Time.deltaTime * 4);
             virtualCamera.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>().m_AmplitudeGain = cameraAmplitudeGain;
 
-            if (speed > 0.5f && controller.isGrounded)
+            if (speed > 0.5f && controller.IsGrounded)
             {
                 rndSoundFootsteps.PlayRandomSound(2.75f / speed);
             }

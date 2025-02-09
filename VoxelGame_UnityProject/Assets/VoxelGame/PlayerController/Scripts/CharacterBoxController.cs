@@ -15,9 +15,9 @@ namespace VoxelGame.Player
 		[NonSerialized] private Vector3 lastPosition;
 		[NonSerialized] private LayerMask collisionLayers;
 
-		public Vector3 velocity { get; private set; }
-		public bool isGrounded { get; private set; }
-		public bool hitHead { get; private set; }
+		public Vector3 Velocity { get; private set; }
+		public bool IsGrounded { get; private set; }
+		public bool HitHead { get; private set; }
 
 		private void Start()
 		{
@@ -45,7 +45,7 @@ namespace VoxelGame.Player
 		{
 			if (motion == Vector3.zero)
 			{
-				velocity = Vector3.zero;
+				Velocity = Vector3.zero;
 				return;
 			}
 
@@ -53,8 +53,8 @@ namespace VoxelGame.Player
 			Vector3 sizeHalf = Size / 2;
 			Vector3 sizeHalfM = new Vector3(sizeHalf.x - COLLISION_MARGIN, sizeHalf.y - COLLISION_MARGIN, sizeHalf.z - COLLISION_MARGIN);
 
-			isGrounded = false;
-			hitHead = false;
+			IsGrounded = false;
+			HitHead = false;
 			RaycastHit hit;
 
 			// Check each axis separately
@@ -70,8 +70,8 @@ namespace VoxelGame.Player
 			{
 				if (Physics.BoxCast(pos, new Vector3(sizeHalfM.x, 0, sizeHalfM.z), Vector3.up * Mathf.Sign(motion.y), out hit, Quaternion.identity, Mathf.Abs(motion.y) + sizeHalf.y, collisionLayers, QueryTriggerInteraction.Ignore))
 				{
-					isGrounded = motion.y < 0;
-					hitHead = !isGrounded;
+					IsGrounded = motion.y < 0;
+					HitHead = !IsGrounded;
 					motion.y = Mathf.Sign(motion.y) * (hit.distance - sizeHalf.y);
 				}
 			}
@@ -122,7 +122,7 @@ namespace VoxelGame.Player
 			transform.position += motion;
 
 			// Calculate velocity
-			velocity = (transform.position - lastPosition) / Time.deltaTime;
+			Velocity = (transform.position - lastPosition) / Time.deltaTime;
 
 			// Store the new position for the next frame
 			lastPosition = transform.position;

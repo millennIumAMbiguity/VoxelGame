@@ -11,7 +11,6 @@ namespace VoxelGame.Player
 		private const float NORMAL_MARGIN = 0.01f;
 
 		public Vector3 Size = new Vector3(1, 1, 1);
-		public Vector3 Center = new Vector3(0, 0, 0);
 
 		[NonSerialized] private Vector3 lastPosition;
 		[NonSerialized] private LayerMask collisionLayers;
@@ -50,8 +49,9 @@ namespace VoxelGame.Player
 				return;
 			}
 
-			Vector3 pos = transform.position + Center;
-			Vector3 size = Size / 2;
+			Vector3 pos = transform.position;
+			Vector3 sizeHalf = Size / 2;
+			Vector3 sizeHalfM = new Vector3(sizeHalf.x - COLLISION_MARGIN, sizeHalf.y - COLLISION_MARGIN, sizeHalf.z - COLLISION_MARGIN);
 
 			isGrounded = false;
 			hitHead = false;
@@ -60,33 +60,33 @@ namespace VoxelGame.Player
 			// Check each axis separately
 			if (motion.x != 0)
 			{
-				if (Physics.BoxCast(pos, size, Vector3.right * Mathf.Sign(motion.x), out hit, Quaternion.identity, Mathf.Abs(motion.x) + COLLISION_MARGIN, collisionLayers))
+				if (Physics.BoxCast(pos, new Vector3(0, sizeHalfM.y, sizeHalfM.z), Vector3.right * Mathf.Sign(motion.x), out hit, Quaternion.identity, Mathf.Abs(motion.x) + sizeHalf.x, collisionLayers, QueryTriggerInteraction.Ignore))
 				{
-					motion.x = Mathf.Sign(motion.x) * (hit.distance - COLLISION_MARGIN);
+					motion.x = Mathf.Sign(motion.x) * (hit.distance - sizeHalf.x);
 				}
 			}
 
 			if (motion.y != 0)
 			{
-				if (Physics.BoxCast(pos, size, Vector3.up * Mathf.Sign(motion.y), out hit, Quaternion.identity, Mathf.Abs(motion.y) + COLLISION_MARGIN, collisionLayers))
+				if (Physics.BoxCast(pos, new Vector3(sizeHalfM.x, 0, sizeHalfM.z), Vector3.up * Mathf.Sign(motion.y), out hit, Quaternion.identity, Mathf.Abs(motion.y) + sizeHalf.y, collisionLayers, QueryTriggerInteraction.Ignore))
 				{
 					isGrounded = motion.y < 0;
 					hitHead = !isGrounded;
-					motion.y = Mathf.Sign(motion.y) * (hit.distance - COLLISION_MARGIN);
+					motion.y = Mathf.Sign(motion.y) * (hit.distance - sizeHalf.y);
 				}
 			}
 
 			if (motion.z != 0)
 			{
-				if (Physics.BoxCast(pos, size, Vector3.forward * Mathf.Sign(motion.z), out hit, Quaternion.identity, Mathf.Abs(motion.z) + COLLISION_MARGIN, collisionLayers))
+				if (Physics.BoxCast(pos, new Vector3(sizeHalfM.x, sizeHalfM.y, 0), Vector3.forward * Mathf.Sign(motion.z), out hit, Quaternion.identity, Mathf.Abs(motion.z) + sizeHalf.z, collisionLayers, QueryTriggerInteraction.Ignore))
 				{
-					motion.z = Mathf.Sign(motion.z) * (hit.distance - COLLISION_MARGIN);
+					motion.z = Mathf.Sign(motion.z) * (hit.distance - sizeHalf.z);
 				}
 			}
 
 
 			// check movement in target direction (eg. check vertical collisions)
-			if (Physics.BoxCast(pos, size, motion.normalized, out hit, Quaternion.identity, motion.magnitude, collisionLayers))
+			if (Physics.BoxCast(pos, sizeHalfM, motion.normalized, out hit, Quaternion.identity, motion.magnitude, collisionLayers, QueryTriggerInteraction.Ignore))
 			{
 
 				if (Mathf.Abs(hit.normal.y) < NORMAL_MARGIN)
@@ -100,18 +100,18 @@ namespace VoxelGame.Player
 						motion.z = 0;
 					}
 
-#if DRAW_EDGE_HITS
+#if DRAW_EDGE_HITS && UNITY_EDITOR
 					print("Horizontal edge hit: " + gameObject.name + "\n" + hit.distance + "\n" + hit.point+ "\n" + hit.normal);
-					DrawBox(transform.position + motion + Center, Size, Color.red, 10f);
+					DrawBox(transform.position + motion, Size, Color.red, 10f);
 #endif
 				}
 				else
 				{
 					motion.y = 0;
 					
-#if DRAW_EDGE_HITS
+#if DRAW_EDGE_HITS && UNITY_EDITOR
 					print("Vertical edge hit: " + gameObject.name + "\n" + hit.distance + "\n" + hit.point+ "\n" + hit.normal);
-					DrawBox(transform.position + motion + Center, Size, Color.yellow, 10f);
+					DrawBox(transform.position + motion, Size, Color.yellow, 10f);
 #endif
 				}
 				
@@ -132,7 +132,7 @@ namespace VoxelGame.Player
 
 		public static void DrawHitBox(CharacterBoxController controller) => DrawHitBox(controller, Color.white);
 		public static void DrawHitBox(CharacterBoxController controller, Color color, float duration = 0, bool depthTest = true) => 
-			DrawBox(controller.transform.position + controller.Center, controller.Size, color, duration, depthTest);
+			DrawBox(controller.transform.position, controller.Size, color, duration, depthTest);
 		public static void DrawBox(Vector3 pos, Vector3 size) => DrawBox(pos, size, Color.white);
 		public static void DrawBox(Vector3 pos, Vector3 size, Color color, float duration = 0, bool depthTest = true)
 		{
@@ -169,7 +169,7 @@ namespace VoxelGame.Player
 		private void OnDrawGizmos()
 		{
 			Gizmos.color = Color.green;
-			Gizmos.DrawWireCube(transform.position + Center, Size);
+			Gizmos.DrawWireCube(transform.position, Size);
 		}
 #endif
 

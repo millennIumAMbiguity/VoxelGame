@@ -100,7 +100,7 @@ namespace VoxelGame.Voxel
 
         public void Delete()
         {
-            cancellationTokenSource?.Cancel();
+            CancelTask();
 
             chunkData = null;
             currentChunkElement = null;
@@ -113,6 +113,13 @@ namespace VoxelGame.Voxel
 
             chunkElementTransp?.Delete();
             chunkElementTransp = null;
+        }
+
+        private void CancelTask()
+        {
+            cancellationTokenSource?.Cancel();
+            cancellationTokenSource?.Dispose();
+            cancellationTokenSource = null;
         }
 
         private void Generate()

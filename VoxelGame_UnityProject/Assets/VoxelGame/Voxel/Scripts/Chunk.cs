@@ -96,11 +96,18 @@ namespace VoxelGame.Voxel
 
         public void Delete()
         {
-            cancellationTokenSource?.Cancel();
+            CancelTask();
 
             data = null;
             view.Delete();
             view = null;
+        }
+
+        private void CancelTask()
+        {
+            cancellationTokenSource?.Cancel();
+            cancellationTokenSource?.Dispose();
+            cancellationTokenSource = null;
         }
 
         public byte GetVoxel(Vector3Int pos)

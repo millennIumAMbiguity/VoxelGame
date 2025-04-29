@@ -6,7 +6,6 @@ using VoxelGame.Voxel;
 using VoxelGame.Input;
 using VoxelGame.Core;
 using Zenject;
-using Cinemachine;
 
 namespace VoxelGame.Player
 {
@@ -33,7 +32,7 @@ namespace VoxelGame.Player
         [SerializeField] private float cameraAngle = 0f;
         [SerializeField] private bool lockCameraPosition = false;
         [SerializeField] private float cameraWalkOffsetMultiplier = 1f;
-        [SerializeField] private CinemachineVirtualCamera virtualCamera;
+        [SerializeField] private Camera Camera;
 
         [Header("Footsteps")]
         [SerializeField] private RandomSound rndSoundFootsteps;
@@ -44,11 +43,12 @@ namespace VoxelGame.Player
         private float cameraAmplitudeGain;
 
         // cinemachine
-        private float cinemachineTargetYaw;
-        private float cinemachineTargetPitch;
+        private float targetYaw;
+        private float targetPitch;
 
         // player
         private float speed;
+        private float targetSpeed;
         private float targetRotation = 0.0f;
         private float rotationVelocity;
         private float verticalVelocity;
@@ -64,6 +64,7 @@ namespace VoxelGame.Player
         private CharacterBoxController controller;
         private Transform mainCamera;
         private PlayerAction action;
+        private HandController handController;
 
         [Inject]
         private readonly Inputs input;
@@ -73,12 +74,28 @@ namespace VoxelGame.Player
             if (mainCamera == null)
             {
                 mainCamera = GameObject.FindGameObjectWithTag("MainCamera").transform;
+
+                if (Camera == null)
+                {
+                    Camera = mainCamera.GetComponent<Camera>();
+                }
+            }
+            
+            handController = Camera.GetComponentInChildren<HandController>();
+            handController.enabled = true;
+
+            if (Camera.transform != cameraTarget)
+            {
+                Camera.transform.parent = cameraTarget;
+                Camera.transform.localPosition = Vector3.zero;
+                Camera.transform.localRotation = Quaternion.identity;
             }
 
-            cinemachineTargetYaw = cameraTarget.rotation.eulerAngles.y;
+            targetYaw = cameraTarget.rotation.eulerAngles.y;
             controller = GetComponent<CharacterBoxController>();
             action = GetComponent<PlayerAction>();
             action.SetCamera(mainCamera);
+            action.SetHand(handController);
 
             jumpTimeoutDelta = jumpTimeout;
             fallTimeoutDelta = fallTimeout;
@@ -126,6 +143,11 @@ namespace VoxelGame.Player
                 if (input.PlayerInputs.Jump.IsPressed && jumpTimeoutDelta <= 0.0f)
                 {
                     verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity);
+                    
+                    handController.HandOffset = Vector2.SmoothDamp(
+                        handController.HandOffset,
+                        handController.HandOffset - Vector2.up*0.1f, ref handVel,
+                        Time.deltaTime * 5f);
                 }
 
                 // jump timeout
@@ -158,32 +180,30 @@ namespace VoxelGame.Player
             if (inputMagnitude > 0.5f && input.PlayerInputs.Run.IsPressed && controller.IsGrounded)
                 runMode = true;
 
-            if (inputMagnitude <0.25f && runMode)
+            if (inputMagnitude < 0.25f || speed + speed < moveSpeed)
                 runMode = false;
 
-            virtualCamera.m_Lens.FieldOfView = Mathf.Lerp(virtualCamera.m_Lens.FieldOfView, runMode ? cameraFovSprint : cameraFov, Time.deltaTime * 2f);
-            float targetSpeed = 0.0f;
+            Camera.fieldOfView = Mathf.Lerp(Camera.fieldOfView, runMode ? cameraFovSprint : cameraFov, Time.deltaTime * 2f);
+            float inputSpeed = 0.0f;
 
             if (moveInput != Vector2.zero)
             {
-                targetSpeed = runMode ? sprintSpeed : moveSpeed;
+                inputSpeed = runMode ? sprintSpeed : moveSpeed;
             }
 
-            float currentHorizontalSpeed = new Vector3(controller.Velocity.x, 0.0f, controller.Velocity.z).magnitude;
+            const float speedOffset = 0.1f;
 
-            float speedOffset = 0.1f;
-
-            if (currentHorizontalSpeed < targetSpeed - speedOffset ||
-                currentHorizontalSpeed > targetSpeed + speedOffset)
+            if (targetSpeed < inputSpeed - speedOffset ||
+                targetSpeed > inputSpeed + speedOffset)
             {
-                speed = Mathf.Lerp(currentHorizontalSpeed, targetSpeed * inputMagnitude,
+                targetSpeed = Mathf.Lerp(targetSpeed, inputSpeed * inputMagnitude,
                     Time.deltaTime * speedChangeRate);
 
-                speed = Mathf.Round(speed * 1000f) / 1000f;
+                targetSpeed = Mathf.Round(targetSpeed * 1000f) / 1000f;
             }
             else
             {
-                speed = targetSpeed;
+                targetSpeed = inputSpeed;
             }
 
             Vector3 inputDirection = new Vector3(moveInput.x, 0.0f, moveInput.y).normalized;
@@ -200,7 +220,7 @@ namespace VoxelGame.Player
 
             Vector3 targetDirection = Quaternion.Euler(0.0f, targetRotation, 0.0f) * Vector3.forward;
 
-            controller.Move(targetDirection.normalized * (speed * Time.deltaTime) +
+            controller.Move(targetDirection.normalized * (targetSpeed * Time.deltaTime) +
                              new Vector3(0.0f, verticalVelocity * Time.deltaTime, 0.0f));
 
             // cancel jump if block above
@@ -209,33 +229,51 @@ namespace VoxelGame.Player
                 verticalVelocity = Mathf.Min(verticalVelocity, 0f);
             }
 
-            cameraAmplitudeGain = Mathf.MoveTowards(cameraAmplitudeGain, controller.IsGrounded ? speed * cameraWalkOffsetMultiplier : 0f, Time.deltaTime * 4);
-            virtualCamera.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>().m_AmplitudeGain = cameraAmplitudeGain;
-
+            speed = Magnitude(controller.VelocityUnscaled.x, controller.VelocityUnscaled.z) / Time.deltaTime;
+            
             if (speed > 0.5f && controller.IsGrounded)
             {
                 rndSoundFootsteps.PlayRandomSound(2.75f / speed);
+                handController.HandSwaySpeed = speed / 10f;
             }
         }
 
+        private float Magnitude(float x, float y)
+        {
+            return Mathf.Sqrt(x * x + y * y);
+        }
+
+        private Vector2 handVel;
+        
         private void CameraRotation()
         {
             Vector2 lookInput = input.PlayerInputs.Look.Value;
+
+            float targetYawDelta = 0;
+            float targetPitchDelta = 0;
 
             if (lookInput.sqrMagnitude >= threshold && !lockCameraPosition)
             {
                 float deltaTimeMultiplier = input.IsCurrentPointerMouse || input.IsCurrentPointerTouchpad ? 1.0f : Time.deltaTime * 180f;
 
-                cinemachineTargetYaw += lookInput.x * deltaTimeMultiplier * rotationSensetivity;
-                cinemachineTargetPitch += lookInput.y * deltaTimeMultiplier * rotationSensetivity;
+                targetYawDelta = lookInput.x * deltaTimeMultiplier * rotationSensetivity;
+                targetPitchDelta = lookInput.y * deltaTimeMultiplier * rotationSensetivity;
+                
+                targetYaw += targetYawDelta;
+                targetPitch += targetPitchDelta;
             }
 
-            cinemachineTargetYaw = ClampAngle(cinemachineTargetYaw, float.MinValue, float.MaxValue);
-            cinemachineTargetPitch = ClampAngle(cinemachineTargetPitch, bottomClamp, topClamp);
+            handController.HandOffset = Vector2.SmoothDamp(
+                handController.HandOffset,
+                new Vector2(-targetYawDelta, targetPitchDelta) * cameraWalkOffsetMultiplier, ref handVel,
+                Time.deltaTime * 5f);
+
+            targetYaw = ClampAngle(targetYaw, float.MinValue, float.MaxValue);
+            targetPitch = ClampAngle(targetPitch, bottomClamp, topClamp);
 
             cameraTarget.rotation = Quaternion.Euler(
-                cinemachineTargetPitch + cameraAngle,
-                cinemachineTargetYaw,
+                targetPitch + cameraAngle,
+                targetYaw,
                 0.0f);
         }
 

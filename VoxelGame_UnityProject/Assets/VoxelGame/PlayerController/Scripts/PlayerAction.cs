@@ -9,12 +9,16 @@ namespace VoxelGame.Player
 {
     public class PlayerAction : MonoBehaviour
     {
+        
+        const int LAYER = 1 << 9;
+        
         [SerializeField] private int voxel;
 
         [Inject]
         private readonly InventoryMenu inventoryMenu;
 
         private Transform cam;
+        private HandController hand;
 
         [Inject]
         private readonly ChunkSystem chunkSystem;
@@ -29,6 +33,11 @@ namespace VoxelGame.Player
             this.cam = cam;
         }
 
+        public void SetHand(HandController hand)
+        {
+            this.hand = hand;
+        }
+
         public void SetVoxel(int voxel)
         {
             this.voxel = voxel;
@@ -36,7 +45,8 @@ namespace VoxelGame.Player
 
         public void Dig()
         {
-            if (VoxelRaycast.Raycast(cam.position, cam.forward, 10f, out var pos, true, 1 << 9))
+            hand.Use();
+            if (VoxelRaycast.Raycast(cam.position, cam.forward, 10f, out var pos, true, LAYER))
             {
                 SoundManager.Instance.PlaySound("block_dig", pos);
                 chunkSystem.SetVoxel(pos, Voxels.AIR, true, true, true);
@@ -45,7 +55,8 @@ namespace VoxelGame.Player
 
         public void Build()
         {
-            if (VoxelRaycast.Raycast(cam.position, cam.forward, 10f, out var pos, false, 1 << 9))
+            hand.Use();
+            if (VoxelRaycast.Raycast(cam.position, cam.forward, 10f, out var pos, false, LAYER))
             {
                 if (IsVoxelInPlayer(pos))
                     return;

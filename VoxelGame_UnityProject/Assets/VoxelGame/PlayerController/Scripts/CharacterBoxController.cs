@@ -15,7 +15,8 @@ namespace VoxelGame.Player
 		[NonSerialized] private Vector3 lastPosition;
 		[NonSerialized] private LayerMask collisionLayers;
 
-		public Vector3 Velocity { get; private set; }
+		public Vector3 Velocity => VelocityUnscaled / Time.deltaTime;
+		public Vector3 VelocityUnscaled { get; private set; }
 		public bool IsGrounded { get; private set; }
 		public bool HitHead { get; private set; }
 
@@ -45,7 +46,7 @@ namespace VoxelGame.Player
 		{
 			if (motion == Vector3.zero)
 			{
-				Velocity = Vector3.zero;
+				VelocityUnscaled = Vector3.zero;
 				return;
 			}
 
@@ -122,7 +123,7 @@ namespace VoxelGame.Player
 			transform.position += motion;
 
 			// Calculate velocity
-			Velocity = (transform.position - lastPosition) / Time.deltaTime;
+			VelocityUnscaled = transform.position - lastPosition;
 
 			// Store the new position for the next frame
 			lastPosition = transform.position;
